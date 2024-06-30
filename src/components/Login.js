@@ -1,21 +1,17 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
-const Signup = () => {
+const Login = () => {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
-	const [confirmPassword, setConfirmPassword] = useState("");
 	const [error, setError] = useState("");
+	const navigate = useNavigate();
 
-	const handleSignup = async (e) => {
+	const handleLogin = async (e) => {
 		e.preventDefault();
-		if (password !== confirmPassword) {
-			setError("Passwords do not match");
-			return;
-		}
 
 		const API_KEY = "AIzaSyCRda7dXO9z4GRWJ46gfbipTX-sn8viCSE";
-		const url = `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${API_KEY}`;
+		const url = `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${API_KEY}`;
 
 		const payload = {
 			email,
@@ -38,7 +34,9 @@ const Signup = () => {
 			}
 
 			const data = await response.json();
-			console.log("User has successfully signed up.", data);
+			console.log("User has successfully logged in.", data);
+			localStorage.setItem("token", data.idToken);
+			navigate("/welcome");
 		} catch (err) {
 			setError(err.message);
 		}
@@ -48,9 +46,9 @@ const Signup = () => {
 		<div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
 			<div className="w-full max-w-xs">
 				<div className="bg-white p-8 rounded-lg shadow-lg">
-					<h2 className="text-2xl font-bold mb-6 text-center">Sign Up</h2>
+					<h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
 					{error && <div className="text-red-500 mb-4">{error}</div>}
-					<form onSubmit={handleSignup}>
+					<form onSubmit={handleLogin}>
 						<div className="mb-4">
 							<label className="block text-gray-700">Email</label>
 							<input
@@ -71,26 +69,16 @@ const Signup = () => {
 								required
 							/>
 						</div>
-						<div className="mb-4">
-							<label className="block text-gray-700">Confirm Password</label>
-							<input
-								type="password"
-								className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-								value={confirmPassword}
-								onChange={(e) => setConfirmPassword(e.target.value)}
-								required
-							/>
-						</div>
 						<button
 							type="submit"
 							className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
 						>
-							Sign Up
+							Login
 						</button>
 					</form>
 					<div className="mt-4 text-center">
-						<Link to="/login" className="text-green-500">
-							Have an account? Login
+						<Link to="/signup" className="text-green-500">
+							Don't have an account? Sign Up
 						</Link>
 					</div>
 				</div>
@@ -99,4 +87,4 @@ const Signup = () => {
 	);
 };
 
-export default Signup;
+export default Login;
