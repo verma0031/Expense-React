@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 
-const Login = () => {
+const Login = ({ onLogin }) => {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [error, setError] = useState("");
@@ -36,6 +36,7 @@ const Login = () => {
 			const data = await response.json();
 			console.log("User has successfully logged in.", data);
 			localStorage.setItem("token", data.idToken);
+			onLogin(); // Call onLogin to update the state in the App component
 			navigate("/welcome");
 		} catch (err) {
 			setError(err.message);

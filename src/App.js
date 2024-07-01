@@ -9,14 +9,13 @@ import Welcome from "./components/Welcome";
 const App = () => {
 	return (
 		<BrowserRouter>
-            <Routes>
-                <Route path="/login" element={<Login />} />
-                <Route path="/signup" element={<Signup />} />
-                <Route path="/" element={<Login />} />
-                <Route path="/welcome" element={<Welcome />} />
-
-            </Routes>
-        </BrowserRouter>
+			<Routes>
+				<Route path="/login" element={<Login />} />
+				<Route path="/signup" element={<Signup />} />
+				<Route path="/welcome" element={<Welcome />} />
+				<Route path="/" element={<Login />} />
+			</Routes>
+		</BrowserRouter>
 	);
 };
 
