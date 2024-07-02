@@ -1,21 +1,20 @@
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
 
-const Login = ({ onLogin }) => {
+const ForgotPassword = () => {
 	const [email, setEmail] = useState("");
-	const [password, setPassword] = useState("");
+	const [message, setMessage] = useState("");
+	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState("");
-	const navigate = useNavigate();
 
-	const handleLogin = async (e) => {
+	const handleForgotPassword = async (e) => {
 		e.preventDefault();
+		setLoading(true);
 
-		const url = `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyCRda7dXO9z4GRWJ46gfbipTX-sn8viCSE`;
+		const url = `https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=AIzaSyCRda7dXO9z4GRWJ46gfbipTX-sn8viCSE`;
 
 		const payload = {
+			requestType: "PASSWORD_RESET",
 			email,
-			password,
-			returnSecureToken: true,
 		};
 
 		try {
@@ -32,13 +31,11 @@ const Login = ({ onLogin }) => {
 				throw new Error(errorData.error.message);
 			}
 
-			const data = await response.json();
-			console.log("User has successfully logged in.", data);
-			localStorage.setItem("token", data.idToken);
-			onLogin();
-			navigate("/welcome");
+			setMessage("Password reset email sent! Check your inbox.");
+			setLoading(false);
 		} catch (err) {
 			setError(err.message);
+			setLoading(false);
 		}
 	};
 
@@ -46,9 +43,12 @@ const Login = ({ onLogin }) => {
 		<div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
 			<div className="w-full max-w-xs">
 				<div className="bg-white p-8 rounded-lg shadow-lg">
-					<h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
+					<h2 className="text-2xl font-bold mb-6 text-center">
+						Forgot Password
+					</h2>
+					{message && <div className="text-green-500 mb-4">{message}</div>}
 					{error && <div className="text-red-500 mb-4">{error}</div>}
-					<form onSubmit={handleLogin}>
+					<form onSubmit={handleForgotPassword}>
 						<div className="mb-4">
 							<label className="block text-gray-700">Email</label>
 							<input
@@ -59,37 +59,18 @@ const Login = ({ onLogin }) => {
 								required
 							/>
 						</div>
-						<div className="mb-4">
-							<label className="block text-gray-700">Password</label>
-							<input
-								type="password"
-								className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-								value={password}
-								onChange={(e) => setPassword(e.target.value)}
-								required
-							/>
-						</div>
 						<button
 							type="submit"
 							className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+							disabled={loading}
 						>
-							Login
+							{loading ? "Sending..." : "Send Password Reset Email"}
 						</button>
 					</form>
-					<div className="mt-4 text-center">
-						<Link to="/signup" className="text-green-500">
-							Don't have an account? Sign Up
-						</Link>
-					</div>
-					<div className="mt-4 text-center">
-						<Link to="/forgot-password" className="text-blue-500">
-							Forgot Password?
-						</Link>
-					</div>
 				</div>
 			</div>
 		</div>
 	);
 };
 
-export default Login;
+export default ForgotPassword;
