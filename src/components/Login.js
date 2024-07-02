@@ -10,8 +10,8 @@ const Login = ({ onLogin }) => {
 	const handleLogin = async (e) => {
 		e.preventDefault();
 
-		const API_KEY = "AIzaSyCRda7dXO9z4GRWJ46gfbipTX-sn8viCSE";
-		const url = `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${API_KEY}`;
+
+		const url = `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyCRda7dXO9z4GRWJ46gfbipTX-sn8viCSE`;
 
 		const payload = {
 			email,
