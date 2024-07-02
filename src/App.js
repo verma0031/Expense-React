@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import  ReactDOM  from "react-dom/client";
+import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Signup from "./components/Signup";
 import Login from "./components/Login";
@@ -12,6 +12,11 @@ const App = () => {
 		setIsLoggedIn(true);
 	};
 
+	const handleLogout = () => {
+		localStorage.removeItem("token");
+		setIsLoggedIn(false);
+	};
+
 	return (
 		<BrowserRouter>
 			<Routes>
@@ -19,7 +24,13 @@ const App = () => {
 				<Route path="/signup" element={<Signup />} />
 				<Route
 					path="/welcome"
-					element={isLoggedIn ? <Welcome /> : <Login onLogin={handleLogin} />}
+					element={
+						isLoggedIn ? (
+							<Welcome onLogout={handleLogout} />
+						) : (
+							<Login onLogin={handleLogin} />
+						)
+					}
 				/>
 				<Route path="/" element={<Login onLogin={handleLogin} />} />
 			</Routes>
@@ -29,4 +40,4 @@ const App = () => {
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
-root.render(<App />);
+root.render(<App />)

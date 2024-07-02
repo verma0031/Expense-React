@@ -1,11 +1,19 @@
 // src/components/Welcome.js
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import ProfileModal from "./ProfileModal";
 
-const Welcome = () => {
+const Welcome = ({onLogout}) => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [emailVerified, setEmailVerified] = useState(false);
 	const [error, setError] = useState("");
+
+    const navigate = useNavigate();
+
+		const handleLogoutClick = () => {
+			onLogout();
+			navigate("/login");
+		};
 
 	useEffect(() => {
 		const checkEmailVerification = async () => {
@@ -73,6 +81,21 @@ const Welcome = () => {
 
 	return (
 		<>
+			<div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
+				<div className="absolute top-4 right-4">
+					<button
+						onClick={handleLogoutClick}
+						className="bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500"
+					>
+						Logout
+					</button>
+				</div>
+				<h1 className="text-4xl font-bold mb-4">Welcome to Expense Tracker</h1>
+				<div>
+					<h2>Your profile is not complete. Complete now</h2>
+				</div>
+			</div>
+            
 			<div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
 				<div>
 					<h1 className="text-4xl font-bold mb-4">
