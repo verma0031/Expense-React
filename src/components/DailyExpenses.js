@@ -246,18 +246,15 @@ const DailyExpenses = () => {
 						</div>
 					)}
 					{isPremium && (
-						<div className="text-center mt-4 text-green-500 font-bold">
-							Premium Member
-						</div>
+						<button
+							onClick={handleThemeToggle}
+							className="fixed bottom-4 right-4 bg-gray-300 dark:bg-gray-700 text-white py-2 px-4 rounded-lg hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 dark:focus:ring-gray-400"
+						>
+							Toggle Theme
+						</button>
 					)}
 				</div>
 			</div>
-			<button
-				onClick={handleThemeToggle}
-				className="fixed bottom-4 right-4 bg-gray-300 dark:bg-gray-700 text-white py-2 px-4 rounded-lg hover:bg-gray-400 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 dark:focus:ring-gray-400"
-			>
-				Toggle Theme
-			</button>
 		</div>
 	);
 };

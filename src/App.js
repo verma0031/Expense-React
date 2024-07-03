@@ -8,6 +8,7 @@ import Login from "./components/Login";
 import Header from "./components/Header";
 import ForgotPassword from "./components/ForgotPassword";
 import DailyExpenses from "./components/DailyExpenses";
+import Cart from "./components/Cart"; 
 
 const App = () => {
 	return (
@@ -20,6 +21,7 @@ const App = () => {
 					<Route path="/welcome" element={<Header />} />
 					<Route path="/daily-expenses" element={<DailyExpenses />} />
 					<Route path="/" element={<Navigate to="/login" />} />
+					<Route path="/mycart" element={<Cart />} />
 				</Routes>
 			</BrowserRouter>
 		</Provider>

@@ -2,14 +2,17 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../redux/authSlice"; // Import logout action from your authSlice
+import { toggleCartVisibility } from "../redux/cart/cartSlice";
 import ProfileModal from "./ProfileModal";
 import { NavLink } from "react-router-dom";
+import Cart from "./Cart";
 
 const Header = () => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [emailVerified, setEmailVerified] = useState(false);
 	const [error, setError] = useState("");
 	const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+	const isCartVisible = useSelector((state) => state.cart.isCartVisible);
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 
@@ -81,6 +84,10 @@ const Header = () => {
 		setIsModalOpen(false);
 	};
 
+	const handleCartClick = () => {
+		dispatch(toggleCartVisibility());
+	};
+
 	return (
 		<>
 			<div className="absolute top-4 right-4">
@@ -129,6 +136,18 @@ const Header = () => {
 				<button>Add Expenses</button>
 			</NavLink>
 
+			<div className="absolute top-16 right-4">
+				<button
+					onClick={handleCartClick}
+					className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+				>
+					{isCartVisible ? "Hide Cart" : "Show Cart"}
+				</button>
+				{/* Cart Component */}
+				{isCartVisible && <Cart />}
+			</div>
+
+			{/* Profile Modal */}
 			{isModalOpen && <ProfileModal onClose={closeModal} />}
 		</>
 	);
