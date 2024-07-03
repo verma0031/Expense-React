@@ -1,12 +1,14 @@
-// src/App2.js
+// src/App.js
 import React from "react";
-import Counter from "./components/Counter";
+import { useSelector } from "react-redux";
+import Login2 from "./components/Login2";
+import MainScreen from "./components/MainScreen";
 
 const App2 = () => {
+	const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+
 	return (
-		<div className="App">
-			<Counter />
-		</div>
+		<div className="App">{isAuthenticated ? <MainScreen /> : <Login2 />}</div>
 	);
 };
 
