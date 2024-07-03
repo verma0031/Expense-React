@@ -1,11 +1,14 @@
+// Header.js
+
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { logout } from "../redux/authSlice"; // Import logout action from your authSlice
+import { logout } from "../redux/authSlice";
 import { toggleCartVisibility } from "../redux/cart/cartSlice";
 import ProfileModal from "./ProfileModal";
 import { NavLink } from "react-router-dom";
 import Cart from "./Cart";
+import ProductItem from "./ProductItem"; // Import ProductItem component
 
 const Header = () => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
@@ -17,7 +20,7 @@ const Header = () => {
 	const navigate = useNavigate();
 
 	const handleLogoutClick = () => {
-		dispatch(logout()); // Dispatch logout action
+		dispatch(logout());
 		navigate("/login");
 	};
 
@@ -88,6 +91,13 @@ const Header = () => {
 		dispatch(toggleCartVisibility());
 	};
 
+	// Dummy products for demonstration
+	const products = [
+		{ id: 1, name: "Product A", price: 10, quantity: 0 },
+		{ id: 2, name: "Product B", price: 15, quantity: 0 },
+		{ id: 3, name: "Product C", price: 20, quantity: 0 },
+	];
+
 	return (
 		<>
 			<div className="absolute top-4 right-4">
@@ -145,6 +155,21 @@ const Header = () => {
 				</button>
 				{/* Cart Component */}
 				{isCartVisible && <Cart />}
+			</div>
+
+			{/* Product List */}
+			<div className="container mx-auto mt-8">
+				<div className="grid grid-cols-3 gap-4">
+					{products.map((product) => (
+						<ProductItem
+							key={product.id}
+							id={product.id}
+							name={product.name}
+							price={product.price}
+							quantity={product.quantity}
+						/>
+					))}
+				</div>
 			</div>
 
 			{/* Profile Modal */}

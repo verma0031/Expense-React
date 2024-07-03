@@ -9,6 +9,7 @@ import Header from "./components/Header";
 import ForgotPassword from "./components/ForgotPassword";
 import DailyExpenses from "./components/DailyExpenses";
 import Cart from "./components/Cart"; 
+import Product from "./components/Product";
 
 const App = () => {
 	return (
@@ -22,6 +23,7 @@ const App = () => {
 					<Route path="/daily-expenses" element={<DailyExpenses />} />
 					<Route path="/" element={<Navigate to="/login" />} />
 					<Route path="/mycart" element={<Cart />} />
+					<Route path="/products/:id" element={<Product />} />
 				</Routes>
 			</BrowserRouter>
 		</Provider>
