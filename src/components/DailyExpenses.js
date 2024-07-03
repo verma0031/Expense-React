@@ -1,23 +1,72 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const DailyExpenses = () => {
 	const [expenses, setExpenses] = useState([]);
 	const [amount, setAmount] = useState("");
 	const [description, setDescription] = useState("");
 	const [category, setCategory] = useState("");
+	const [error, setError] = useState("");
 
-	const handleAddExpense = (e) => {
+	const apiURL =
+		"https://expense-tracker-adfab-default-rtdb.firebaseio.com/expenses.json";
+
+	useEffect(() => {
+		const fetchExpenses = async () => {
+			try {
+				const response = await fetch(apiURL);
+				if (!response.ok) {
+					throw new Error("Failed to fetch expenses.");
+				}
+				const data = await response.json();
+				if (data) {
+					const expensesList = Object.keys(data).map((key) => ({
+						id: key,
+						...data[key],
+					}));
+					setExpenses(expensesList);
+				}
+			} catch (error) {
+				console.error("Error fetching expenses: ", error);
+				setError("Failed to fetch expenses.");
+			}
+		};
+
+		fetchExpenses();
+	}, []);
+
+	const handleAddExpense = async (e) => {
 		e.preventDefault();
 		const newExpense = {
-			id: Date.now(),
 			amount,
 			description,
 			category,
 		};
-		setExpenses([...expenses, newExpense]);
-		setAmount("");
-		setDescription("");
-		setCategory("");
+
+		try {
+			const response = await fetch(apiURL, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(newExpense),
+			});
+
+			if (!response.ok) {
+				throw new Error("Failed to add expense.");
+			}
+
+			const data = await response.json();
+			setExpenses((prevExpenses) => [
+				...prevExpenses,
+				{ id: data.name, ...newExpense },
+			]);
+			setAmount("");
+			setDescription("");
+			setCategory("");
+		} catch (error) {
+			console.error("Error adding expense: ", error);
+			setError("Failed to add expense.");
+		}
 	};
 
 	return (
@@ -73,6 +122,7 @@ const DailyExpenses = () => {
 						</button>
 					</form>
 				</div>
+				{error && <div className="text-red-500 text-center mt-4">{error}</div>}
 				<div className="mt-6">
 					<h2 className="text-2xl font-bold mb-4 text-center">Expenses</h2>
 					<ul>
