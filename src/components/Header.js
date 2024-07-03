@@ -1,18 +1,20 @@
-// src/components/Header.js
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { logout } from "../redux/authSlice"; // Import logout action from your authSlice
 import ProfileModal from "./ProfileModal";
 import { NavLink } from "react-router-dom";
 
-const Welcome = ({ onLogout }) => {
+const Header = () => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [emailVerified, setEmailVerified] = useState(false);
 	const [error, setError] = useState("");
-
+	const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+	const dispatch = useDispatch();
 	const navigate = useNavigate();
 
 	const handleLogoutClick = () => {
-		onLogout();
+		dispatch(logout()); // Dispatch logout action
 		navigate("/login");
 	};
 
@@ -23,7 +25,7 @@ const Welcome = ({ onLogout }) => {
 
 			try {
 				const response = await fetch(
-					`https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyCRda7dXO9z4GRWJ46gfbipTX-sn8viCSE`,
+					`https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyCRda7dXO9z4GRWJ46gfbipTX-sn8viCSE`, // Replace with your API key
 					{
 						method: "POST",
 						headers: {
@@ -50,7 +52,7 @@ const Welcome = ({ onLogout }) => {
 
 		try {
 			const response = await fetch(
-				`https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=AIzaSyCRda7dXO9z4GRWJ46gfbipTX-sn8viCSE`,
+				`https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=AIzaSyCRda7dXO9z4GRWJ46gfbipTX-sn8viCSE`, // Replace with your API key
 				{
 					method: "POST",
 					headers: {
@@ -122,12 +124,14 @@ const Welcome = ({ onLogout }) => {
 					</div>
 				</div>
 			</header>
+
 			<NavLink to="/daily-expenses">
 				<button>Add Expenses</button>
 			</NavLink>
+
 			{isModalOpen && <ProfileModal onClose={closeModal} />}
 		</>
 	);
 };
 
-export default Welcome;
+export default Header;

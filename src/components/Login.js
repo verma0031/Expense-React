@@ -1,10 +1,13 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
+import { loginSuccess, loginFailure } from "../redux/authActions";
 
-const Login = ({ onLogin }) => {
+const Login = () => {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [error, setError] = useState("");
+	const dispatch = useDispatch();
 	const navigate = useNavigate();
 
 	const handleLogin = async (e) => {
@@ -35,10 +38,11 @@ const Login = ({ onLogin }) => {
 			const data = await response.json();
 			console.log("User has successfully logged in.", data);
 			localStorage.setItem("token", data.idToken);
-			onLogin();
+			dispatch(loginSuccess(data.idToken, data.localId)); // Dispatch action on successful login
 			navigate("/welcome");
 		} catch (err) {
 			setError(err.message);
+			dispatch(loginFailure(err.message)); // Dispatch action on login failure
 		}
 	};
 
