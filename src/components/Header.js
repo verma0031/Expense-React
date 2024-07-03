@@ -1,19 +1,20 @@
-// src/components/Welcome.js
+// src/components/Header.js
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import ProfileModal from "./ProfileModal";
+import { NavLink } from "react-router-dom";
 
-const Welcome = ({onLogout}) => {
+const Welcome = ({ onLogout }) => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [emailVerified, setEmailVerified] = useState(false);
 	const [error, setError] = useState("");
 
-    const navigate = useNavigate();
+	const navigate = useNavigate();
 
-		const handleLogoutClick = () => {
-			onLogout();
-			navigate("/login");
-		};
+	const handleLogoutClick = () => {
+		onLogout();
+		navigate("/login");
+	};
 
 	useEffect(() => {
 		const checkEmailVerification = async () => {
@@ -21,7 +22,6 @@ const Welcome = ({onLogout}) => {
 			if (!token) return;
 
 			try {
-
 				const response = await fetch(
 					`https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyCRda7dXO9z4GRWJ46gfbipTX-sn8viCSE`,
 					{
@@ -81,46 +81,50 @@ const Welcome = ({onLogout}) => {
 
 	return (
 		<>
-			<div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
-				<div className="absolute top-4 right-4">
-					<button
-						onClick={handleLogoutClick}
-						className="bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500"
-					>
-						Logout
-					</button>
-				</div>
-				<h1 className="text-4xl font-bold mb-4">Welcome to Expense Tracker</h1>
-				<div>
-					<h2>Your profile is not complete. Complete now</h2>
-				</div>
+			<div className="absolute top-4 right-4">
+				<button
+					onClick={handleLogoutClick}
+					className="bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500"
+				>
+					Logout
+				</button>
 			</div>
-            
-			<div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
-				<div>
-					<h1 className="text-4xl font-bold mb-4">
-						Welcome to Expense Tracker
-					</h1>
-					{!emailVerified && (
-						<div>
-							<p>Your email is not verified. Please verify your email.</p>
+
+			<header className="w-full bg-gray-100 shadow-md p-4">
+				<div className="container mx-auto flex flex-col items-center justify-center">
+					<div className="bg-white shadow-md rounded-lg p-8 w-full max-w-4xl">
+						<h1 className="text-4xl font-bold mb-4 text-center">
+							Welcome to Expense Tracker
+						</h1>
+						{!emailVerified && (
+							<div className="mb-4 text-center">
+								<p className="text-lg text-red-500">
+									Your email is not verified. Please verify your email.
+								</p>
+								<button
+									onClick={sendVerificationEmail}
+									className="bg-blue-500 text-white px-4 py-2 rounded-lg mt-2 hover:bg-blue-600 transition duration-300"
+								>
+									Verify Email
+								</button>
+							</div>
+						)}
+						<h2 className="text-xl text-center mb-4">
+							Your profile is not complete.{" "}
 							<button
-								onClick={sendVerificationEmail}
-								className="bg-blue-500 text-white px-4 py-2 rounded-lg mt-2"
+								onClick={openModal}
+								className="text-blue-500 underline hover:text-blue-700 transition duration-300"
 							>
-								Verify Email
+								Complete now
 							</button>
-						</div>
-					)}
-					<h2 className="text-xl">
-						Your profile is not complete.{" "}
-						<button onClick={openModal} className="text-blue-500 underline">
-							Complete now
-						</button>
-					</h2>
-					{error && <div className="text-red-500">{error}</div>}
+						</h2>
+						{error && <div className="text-red-500 text-center">{error}</div>}
+					</div>
 				</div>
-			</div>
+			</header>
+			<NavLink to="/daily-expenses">
+				<button>Add Expenses</button>
+			</NavLink>
 			{isModalOpen && <ProfileModal onClose={closeModal} />}
 		</>
 	);

@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import ReactDOM from "react-dom/client"
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Signup from "./components/Signup";
 import Login from "./components/Login";
-import Welcome from "./components/Welcome";
+import Header from "./components/Header";
 import ForgotPassword from "./components/ForgotPassword";
+import DailyExpenses from "./components/DailyExpenses";
 
 const App = () => {
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -28,13 +29,17 @@ const App = () => {
 					path="/welcome"
 					element={
 						isLoggedIn ? (
-							<Welcome onLogout={handleLogout} />
+							<Header onLogout={handleLogout} />
 						) : (
-							<Login onLogin={handleLogin} />
+							<Navigate to="/login" />
 						)
 					}
 				/>
-				<Route path="/" element={<Login onLogin={handleLogin} />} />
+				<Route
+					path="/daily-expenses"
+					element={isLoggedIn ? <DailyExpenses /> : <Navigate to="/login" />}
+				/>
+				<Route path="/" element={<Navigate to="/login" />} />
 			</Routes>
 		</BrowserRouter>
 	);
