@@ -5,15 +5,16 @@ const DailyExpenses = () => {
 	const [amount, setAmount] = useState("");
 	const [description, setDescription] = useState("");
 	const [category, setCategory] = useState("");
+	const [editId, setEditId] = useState(null);
 	const [error, setError] = useState("");
 
 	const apiURL =
-		"https://expense-tracker-adfab-default-rtdb.firebaseio.com/expenses.json";
+		"https://expense-tracker-adfab-default-rtdb.firebaseio.com/expenses";
 
 	useEffect(() => {
 		const fetchExpenses = async () => {
 			try {
-				const response = await fetch(apiURL);
+				const response = await fetch(`${apiURL}.json`);
 				if (!response.ok) {
 					throw new Error("Failed to fetch expenses.");
 				}
@@ -43,29 +44,78 @@ const DailyExpenses = () => {
 		};
 
 		try {
-			const response = await fetch(apiURL, {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify(newExpense),
-			});
+			if (editId) {
+				const response = await fetch(`${apiURL}/${editId}.json`, {
+					method: "PUT",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify(newExpense),
+				});
 
-			if (!response.ok) {
-				throw new Error("Failed to add expense.");
+				if (!response.ok) {
+					throw new Error("Failed to update expense.");
+				}
+
+				setExpenses((prevExpenses) =>
+					prevExpenses.map((expense) =>
+						expense.id === editId ? { id: editId, ...newExpense } : expense
+					)
+				);
+				setEditId(null);
+			} else {
+				const response = await fetch(`${apiURL}.json`, {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify(newExpense),
+				});
+
+				if (!response.ok) {
+					throw new Error("Failed to add expense.");
+				}
+
+				const data = await response.json();
+				setExpenses((prevExpenses) => [
+					...prevExpenses,
+					{ id: data.name, ...newExpense },
+				]);
 			}
 
-			const data = await response.json();
-			setExpenses((prevExpenses) => [
-				...prevExpenses,
-				{ id: data.name, ...newExpense },
-			]);
 			setAmount("");
 			setDescription("");
 			setCategory("");
 		} catch (error) {
-			console.error("Error adding expense: ", error);
-			setError("Failed to add expense.");
+			console.error("Error adding/updating expense: ", error);
+			setError("Failed to add/update expense.");
+		}
+	};
+
+	const handleEditExpense = (expense) => {
+		setAmount(expense.amount);
+		setDescription(expense.description);
+		setCategory(expense.category);
+		setEditId(expense.id);
+	};
+
+	const handleDeleteExpense = async (id) => {
+		try {
+			const response = await fetch(`${apiURL}/${id}.json`, {
+				method: "DELETE",
+			});
+
+			if (!response.ok) {
+				throw new Error("Failed to delete expense.");
+			}
+
+			setExpenses((prevExpenses) =>
+				prevExpenses.filter((expense) => expense.id !== id)
+			);
+			console.log("Expense successfully deleted");
+		} catch (error) {
+			console.error("Error deleting expense: ", error);
+			setError("Failed to delete expense.");
 		}
 	};
 
@@ -74,7 +124,7 @@ const DailyExpenses = () => {
 			<div className="w-full max-w-md">
 				<div className="bg-white p-8 rounded-lg shadow-lg">
 					<h2 className="text-2xl font-bold mb-6 text-center">
-						Add Daily Expense
+						{editId ? "Edit Expense" : "Add Daily Expense"}
 					</h2>
 					<form onSubmit={handleAddExpense}>
 						<div className="mb-4">
@@ -118,7 +168,7 @@ const DailyExpenses = () => {
 							type="submit"
 							className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
 						>
-							Add Expense
+							{editId ? "Update Expense" : "Add Expense"}
 						</button>
 					</form>
 				</div>
@@ -129,17 +179,33 @@ const DailyExpenses = () => {
 						{expenses.map((expense) => (
 							<li
 								key={expense.id}
-								className="bg-white p-4 rounded-lg shadow-lg mb-4"
+								className="bg-white p-4 rounded-lg shadow-lg mb-4 flex justify-between items-center"
 							>
-								<p>
-									<strong>Amount:</strong> ${expense.amount}
-								</p>
-								<p>
-									<strong>Description:</strong> {expense.description}
-								</p>
-								<p>
-									<strong>Category:</strong> {expense.category}
-								</p>
+								<div>
+									<p>
+										<strong>Amount:</strong> ${expense.amount}
+									</p>
+									<p>
+										<strong>Description:</strong> {expense.description}
+									</p>
+									<p>
+										<strong>Category:</strong> {expense.category}
+									</p>
+								</div>
+								<div>
+									<button
+										onClick={() => handleEditExpense(expense)}
+										className="bg-yellow-500 text-white px-4 py-2 rounded-lg mr-2 hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500"
+									>
+										Edit
+									</button>
+									<button
+										onClick={() => handleDeleteExpense(expense.id)}
+										className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500"
+									>
+										Delete
+									</button>
+								</div>
 							</li>
 						))}
 					</ul>
