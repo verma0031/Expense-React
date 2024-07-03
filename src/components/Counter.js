@@ -1,24 +1,38 @@
 // src/components/Counter.js
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import {
-	increment,
-	decrement,
-	incrementBy2,
-	decrementBy2,
+	INCREMENT,
+	DECREMENT,
+	INCREMENTBY2,
+	DECREMENTBY2,
+	INCREMENTBY5,
+	DECREMENTBY5,
 } from "../redux/actions";
 
 const Counter = () => {
-	const count = useSelector((state) => state);
+	const count = useSelector((state) => state.count);
 	const dispatch = useDispatch();
 
 	return (
 		<div>
-			<p>Count: {count}</p>
-			<button onClick={() => dispatch(increment())}>Increment</button>
-			<button onClick={() => dispatch(decrement())}>Decrement</button>
-			<button onClick={() => dispatch(incrementBy2())}>Increment by 2</button>
-			<button onClick={() => dispatch(decrementBy2())}>Decrement by 2</button>
+			<h1>Count: {count}</h1>
+			<button onClick={() => dispatch({ type: INCREMENT })}>Increment</button>
+			<button onClick={() => dispatch({ type: DECREMENT })}>Decrement</button>
+			<button onClick={() => dispatch({ type: INCREMENTBY2 })}>
+				IncrementBy2
+			</button>
+			<button onClick={() => dispatch({ type: DECREMENTBY2 })}>
+				DecrementBy2
+			</button>
+			<button onClick={() => dispatch({ type: INCREMENTBY5 })}>
+				IncrementBy5
+			</button>{" "}
+			{/* New button */}
+			<button onClick={() => dispatch({ type: DECREMENTBY5 })}>
+				DecrementBy5
+			</button>{" "}
+			{/* New button */}
 		</div>
 	);
 };
