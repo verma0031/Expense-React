@@ -1,10 +1,16 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { removeFromCart, updateQuantity} from "../redux/cart/cartSlice";
+import { fetchCartData } from "../redux/cart/cartSlice";
+import { removeFromCart, updateQuantity } from "../redux/cart/cartSlice";
 
 const Cart = () => {
 	const cartItems = useSelector((state) => state.cart.cartItems);
 	const dispatch = useDispatch();
+
+	useEffect(() => {
+		// Fetch cart data when the component mounts
+		dispatch(fetchCartData());
+	}, [dispatch]);
 
 	const handleRemoveFromCart = (id) => {
 		dispatch(removeFromCart({ id }));

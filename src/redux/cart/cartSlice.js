@@ -1,5 +1,3 @@
-// cartSlice.js
-
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
@@ -66,7 +64,51 @@ const cartSlice = createSlice({
 				state.cartItems[index].quantity = quantity;
 			}
 		},
-		// Other cart-related actions as needed
+		setCartItems(state, action) {
+			state.cartItems = action.payload;
+		},
+		fetchCartStart(state) {
+			state.notification = {
+				status: "pending",
+				title: "Fetching...",
+				message: "Fetching cart data!",
+			};
+		},
+		fetchCartSuccess(state) {
+			state.notification = {
+				status: "success",
+				title: "Success!",
+				message: "Fetched cart data successfully!",
+			};
+		},
+		fetchCartError(state, action) {
+			state.notification = {
+				status: "error",
+				title: "Error!",
+				message: action.payload,
+			};
+		},
+		updateCartStart(state) {
+			state.notification = {
+				status: "pending",
+				title: "Updating...",
+				message: "Updating cart data!",
+			};
+		},
+		updateCartSuccess(state) {
+			state.notification = {
+				status: "success",
+				title: "Success!",
+				message: "Updated cart data successfully!",
+			};
+		},
+		updateCartError(state, action) {
+			state.notification = {
+				status: "error",
+				title: "Error!",
+				message: action.payload,
+			};
+		},
 	},
 });
 
@@ -79,6 +121,13 @@ export const {
 	addToCart,
 	removeFromCart,
 	updateQuantity,
+	setCartItems,
+	fetchCartStart,
+	fetchCartSuccess,
+	fetchCartError,
+	updateCartStart,
+	updateCartSuccess,
+	updateCartError,
 } = cartSlice.actions;
 
 export const sendCartData = (item) => async (dispatch) => {
@@ -105,4 +154,57 @@ export const sendCartData = (item) => async (dispatch) => {
 		dispatch(addToCartError(error.message));
 	}
 };
+
+export const fetchCartData = () => async (dispatch) => {
+	dispatch(fetchCartStart());
+	try {
+		const response = await fetch(
+			"https://expense-tracker-adfab-default-rtdb.firebaseio.com/cart.json"
+		);
+
+		if (!response.ok) {
+			throw new Error("Failed to fetch cart data");
+		}
+
+		const data = await response.json();
+		const loadedCartItems = Object.keys(data).map((key) => ({
+			id: key,
+			...data[key],
+		}));
+
+		dispatch(setCartItems(loadedCartItems));
+		dispatch(fetchCartSuccess());
+	} catch (error) {
+		dispatch(fetchCartError(error.message));
+	}
+};
+
+export const updateCartData = (id, quantity) => async (dispatch, getState) => {
+	const cartItems = getState().cart.cartItems;
+	const item = cartItems.find((item) => item.id === id);
+
+	dispatch(updateCartStart());
+	try {
+		const response = await fetch(
+			`https://expense-tracker-adfab-default-rtdb.firebaseio.com/cart/${id}.json`,
+			{
+				method: "PATCH",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ quantity }),
+			}
+		);
+
+		if (!response.ok) {
+			throw new Error("Failed to update cart data");
+		}
+
+		dispatch(updateQuantity({ id, quantity }));
+		dispatch(updateCartSuccess());
+	} catch (error) {
+		dispatch(updateCartError(error.message));
+	}
+};
+
 export default cartSlice.reducer;
