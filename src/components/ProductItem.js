@@ -1,14 +1,14 @@
-// ProductItem.js
+// components/ProductItem.js
 
 import React from "react";
 import { useDispatch } from "react-redux";
-import { addToCart, removeFromCart } from "../redux/cart/cartSlice";
+import { sendCartData, removeFromCart } from "../redux/cart/cartSlice";
 
 const ProductItem = ({ id, name, price, quantity }) => {
 	const dispatch = useDispatch();
 
 	const handleAddToCart = () => {
-		dispatch(addToCart({ id, name, price }));
+		dispatch(sendCartData({ id, name, price }));
 	};
 
 	const handleRemoveFromCart = () => {
